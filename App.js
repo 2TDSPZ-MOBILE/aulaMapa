@@ -1,7 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,Button } from 'react-native';
+import React,{useState,useEffect} from 'react';
+//Biblioteca de localização
+import * as Location from 'expo-location'
+
+//Importa a biblioteca do mapa
+import MapView,{Marker} from 'react-native-maps';
 
 export default function App() {
+
+  //Estado para armazenar as coordenadas(latitude e logintude)
+  const[location,setLocation]=useState(null)
+
+  //Estado para armazensar o endereço obtido da localização
+  const[address,setAddress]=useState(null)
+
+  //Estado para guardar o status da permissao
+  const[permission,setPermission]=useState(null)
+
+  useEffect(()=>{
+    (async()=>{
+      //Solicitar permissão para acessar a localização em primeira inicio
+      const{status} = await Location.requestForegroundPermissionsAsync()
+      setPermission(status)
+
+      if(status === 'granted'){
+        const userLocation = await Location.getCurrentPositionAsync({})
+        setLocation(userLocation.coords)
+      }
+    })
+  },[])
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
